@@ -1,7 +1,7 @@
 <template>
   <div class="top">
     <el-row>
-      <el-col class="join_top">
+      <el-col class="alien_center">
         <el-card class="join_main" shadow="false" v-loading="loading">
           <span>가입화면</span>
           <el-form
@@ -174,9 +174,6 @@ export default {
 </script>
 
 <style scoped>
-.top {
-  margin-top: 300px;
-}
 
 .join_top {
   text-align: center;

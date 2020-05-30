@@ -1,7 +1,7 @@
 <template>
   <div class="top">
     <el-row>
-      <el-col class="login_top">
+      <el-col class="alien_center">
         <el-card class="login_main" shadow="false">
           <el-image :src="img_src" />
           <el-form
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { executeLogin } from '../api/user.api';
+// import { executeLogin } from '../api/user.api';
 
 export default {
   name: 'Login',
@@ -72,19 +72,21 @@ export default {
       //검증
       this.$refs[formname].validate((valid) => {
         if (valid) {
-          executeLogin({
+          this.$router.push('/main')
+          /*executeLogin({
             id: this.loginForm.userId,
             password: this.loginForm.password,
           }).then((res)=> {
             this.$store.commit('setUserState', {
               userId: this.joinForm.userId,
               userNm: this.joinForm.userNm,
+
             }); // 유저 정보 업데이트
             //res userNm, userId, email
             console.log(res);
           }).catch( ()=>{
             // this.$refs[formname].password.focus(); 포커스 어떡하냐
-          });
+          });*/
         }
       });
     },
@@ -96,14 +98,6 @@ export default {
 </script>
 
 <style scoped>
-.top {
-  margin-top: 300px;
-}
-
-.login_top {
-  text-align: center;
-  display: inline-block;
-}
 
 .login_main {
   display: inline-block;

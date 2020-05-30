@@ -1,0 +1,9 @@
+body {
+    margin-top: 15%;
+}
+
+
+.alien_center {
+    text-align: center;
+    display: inline-block;
+}
