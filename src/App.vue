@@ -1,10 +1,6 @@
 <template>
   <div id="app">
     <div>
-      {{ getCounter }}
-      <button @click="addCounter">+</button>
-      <button @click="subCounter">-</button>
-      <button @click="addTen">10</button>
       <router-view></router-view>
     </div>
   </div>
