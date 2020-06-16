@@ -22,11 +22,6 @@
                         width="120"
                 ></el-table-column>
                 <el-table-column
-                        width="100"
-                        label="작성자"
-                        prop="userNm"
-                ></el-table-column>
-                <el-table-column
                         width="200"
                         label="내용"
                         prop="content"
@@ -48,20 +43,19 @@
 </template>
 
 <script>
-  export default {
-    name: 'Main',
+import ListService from '../api/list.api'
+export default {
+  name: 'Main',
     data() {
         return {
             tableData : [
                 {
                     regDate: '2099-12-31',
                     content: '안녕하세요',
-                    userNm: '김형익',
                 },
                 {
                     regDate: '2099-12-31',
                     content: '안녕하세요22',
-                    userNm: '김개똥',
                 },
 
             ],
@@ -78,6 +72,12 @@
             console.log(index);
             console.log(row);
         }
+    },
+    async created() {
+        const {userId} = this.$store.getters.getUser;
+        const list = await ListService.getAllList(userId);
+        console.log(list.data);
+        this.tableData = list.data;
     }
   };
 </script>
