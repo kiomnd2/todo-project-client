@@ -2,4 +2,9 @@ const getCounter = (state) => {
   return state.counter;
 };
 
-export default { getCounter }
+const getUser = (state) => {
+  return state.userState;
+}
+
+
+export default { getCounter, getUser}

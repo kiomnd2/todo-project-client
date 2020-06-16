@@ -156,7 +156,7 @@ export default {
               this.$router.push('/');
             })
             .catch((e) => {
-              this.$message('로그인이 실패 했습니다.');
+              this.$message('회원가입이 실패 했습니다.');
               this.loading = false;
               console.log(e);
             });
