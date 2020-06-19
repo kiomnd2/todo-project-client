@@ -5,12 +5,12 @@
                 <el-row>
                     <el-col :span="22">
                         <el-form-item>
-                            <el-input icon="el-icon-edit" v-model="regContent"></el-input>
+                            <el-input icon="el-icon-edit" v-model="contents"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="2">
                         <el-form-item>
-                            <el-button type="primary" native-type="submit">등록</el-button>
+                            <el-button @click="regContent" type="primary" native-type="button">등록</el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -48,22 +48,45 @@ export default {
   name: 'Main',
     data() {
         return {
+            userId: '',
             tableData : [
                 {
+                    id: '1',
                     regDate: '2099-12-31',
                     content: '안녕하세요',
                 },
                 {
+                    id: '2',
                     regDate: '2099-12-31',
                     content: '안녕하세요22',
                 },
 
             ],
             search: '',
-            regContent: '',
+            contents: '',
         }
     },
     methods :{
+        async regContent() {
+            const data = {
+                memberDto: {
+                    userId: this.userId,
+                },
+                contents : this.contents,
+                isComplete: false,
+            };
+            console.log(data);
+            try {
+               const list = await ListService.RegisterList(data);
+               console.log(list);
+
+            } catch (e) {
+                console.log(e);
+                this.$message.error("등록에 실패했습니다.");
+            }
+
+
+        },
         handleEdit(index, row) {
             console.log(index);
             console.log(row);
@@ -74,8 +97,8 @@ export default {
         }
     },
     async created() {
-        const {userId} = this.$store.getters.getUser;
-        const list = await ListService.getAllList(userId);
+        this.userId = this.$store.getters.getUser.userId;
+        const list = await ListService.getAllList(this.userId);
         console.log(list.data);
         this.tableData = list.data;
     }
