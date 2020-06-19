@@ -1,6 +1,6 @@
 <template>
-  <div class="top">
-    <el-row>
+  <div class="top" >
+    <el-row :v-loading="appLoading">
       <el-col class="alien_center">
         <el-card class="login_main" shadow="false">
           <el-image :src="img_src" />
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-// import { executeLogin } from '../api/user.api';
+import { executeLogin } from '../api/user.api';
 
 export default {
   name: 'Login',
@@ -55,6 +55,7 @@ export default {
       callback();
     };
     return {
+      appLoading: false,
       labelPosition: 'left',
       img_src: 'logo.jpg',
       loginForm: {
@@ -72,21 +73,23 @@ export default {
       //검증
       this.$refs[formname].validate((valid) => {
         if (valid) {
-          this.$router.push('/main')
-          /*executeLogin({
-            id: this.loginForm.userId,
+          this.appLoading = true;
+          executeLogin({
+            userId: this.loginForm.userId,
             password: this.loginForm.password,
           }).then((res)=> {
             this.$store.commit('setUserState', {
-              userId: this.joinForm.userId,
-              userNm: this.joinForm.userNm,
-
+              userId: this.loginForm.userId,
+              userNm: this.loginForm.userNm,
             }); // 유저 정보 업데이트
-            //res userNm, userId, email
-            console.log(res);
-          }).catch( ()=>{
+            this.$router.push("/main");
+          }).catch( (e)=>{
+            this.$message.error(e);
+            console.log(e);
             // this.$refs[formname].password.focus(); 포커스 어떡하냐
-          });*/
+          }).finally(()=>{
+            this.appLoading = false;
+          });
         }
       });
     },

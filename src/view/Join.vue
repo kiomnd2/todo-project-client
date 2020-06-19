@@ -153,6 +153,7 @@ export default {
           executeRegister(this.joinForm)
             .then(() => {
               this.loading = false;
+              this.$message.success('회원가입이 되었습니다');
               this.$router.push('/');
             })
             .catch((e) => {
