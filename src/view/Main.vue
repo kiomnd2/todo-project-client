@@ -1,6 +1,7 @@
 <template>
     <div style="text-align: center;">
-        <el-card shadow="true" style="width: 900px;" class="alien_center">
+        <el-card shadow="true" style="width: 900px;" class="alien_center" v-loading="loading">
+            <el-tag style="text-align: right; display: block;">{{userId}}님이 로그인 하셨습니다</el-tag>
             <el-form>
                 <el-row>
                     <el-col :span="22">
@@ -15,22 +16,26 @@
                     </el-col>
                 </el-row>
             </el-form>
-            <el-table :data="tableData">
+            <el-table :data="tableData" :key="tableData.id">
                 <el-table-column
                         label="날짜"
                         prop="regDate"
-                        width="120"
+                        width="230"
                 ></el-table-column>
                 <el-table-column
-                        width="200"
                         label="내용"
-                        prop="content"
-                ></el-table-column>
+                        prop="contents">
+                </el-table-column>
+
                 <el-table-column align="right">
                     <template slot-scope="scope">
-                        <el-button
+                        <el-button v-if="!modeE"
                                 size="mini"
-                                @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+                                @click="modeE = true">Edit</el-button>
+                        <el-button v-else
+                                   size="mini"
+                                   @click="handleEdit(scope.$index, scope.row)">확인</el-button>
+
                         <el-button
                                 size="mini"
                                 type="danger"
@@ -48,22 +53,25 @@ export default {
   name: 'Main',
     data() {
         return {
+            loading: false,
+            modeE: false,
             userId: '',
             tableData : [
                 {
                     id: '1',
                     regDate: '2099-12-31',
-                    content: '안녕하세요',
+                    contents: '안녕하세요',
                 },
                 {
                     id: '2',
                     regDate: '2099-12-31',
-                    content: '안녕하세요22',
+                    contents: '안녕하세요22',
                 },
 
             ],
             search: '',
             contents: '',
+            cntSize: 0,
         }
     },
     methods :{
@@ -75,25 +83,52 @@ export default {
                 contents : this.contents,
                 isComplete: false,
             };
-            console.log(data);
             try {
-               const list = await ListService.RegisterList(data);
-               console.log(list);
-
+                this.loading = true;
+               const item = await ListService.RegisterList(data);
+               this.tableData.push(item.data);
+               this.contents= "";
             } catch (e) {
                 console.log(e);
                 this.$message.error("등록에 실패했습니다.");
+            } finally {
+                this.loading = false;
             }
 
 
         },
         handleEdit(index, row) {
-            console.log(index);
-            console.log(row);
+            this.modeE = false ;
+
         },
         handleDelete(index, row) {
-            console.log(index);
-            console.log(row);
+            this.$confirm('제거하시겠습니까>', {
+                confirmButtonText: '네',
+                cancelButtonText: '아니요',
+                type: 'warning'
+            }).then(() => {
+                // this.tableData.
+                const item = this.tableData[index];
+                // const item = this.tableData.get(index);
+                // console.log(this.tableData.get(index))
+                this.loading = true;
+                ListService.deleteList(item).then(()=>{
+                    this.tableData.splice(index, 1);
+                    this.$message({
+                        type: 'success',
+                        message: 'Delete completed'
+                    });
+                }).catch(()=>{
+                    this.$message.error("삭제 실패")
+                })
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: 'Delete canceled'
+                });
+            }).finally(()=>{
+                this.loading = false;
+            })
         }
     },
     async created() {
