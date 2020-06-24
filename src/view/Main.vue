@@ -18,6 +18,14 @@
             </el-form>
             <el-table :data="tableData" :key="tableData.id">
                 <el-table-column
+                    label="체크"
+                    width="60">
+                    <template slot-scope="scope">
+                        <el-switch v-model="scope.row.complete" @change="handleEdit(scope.$index, scope.row)">
+                        </el-switch>
+                    </template>
+                </el-table-column>
+                <el-table-column
                         label="날짜"
                         prop="regDate"
                         width="230"
@@ -81,7 +89,7 @@ export default {
                     userId: this.userId,
                 },
                 contents : this.contents,
-                isComplete: false,
+                complete: false,
             };
             try {
                 this.loading = true;
@@ -98,8 +106,14 @@ export default {
 
         },
         handleEdit(index, row) {
-            this.modeE = false ;
-
+            row = {
+                ...row,
+                memberDto: {
+                    userId: this.userId
+                }
+            }
+            console.log(row);
+            ListService.updateList(row);
         },
         handleDelete(index, row) {
             this.$confirm('제거하시겠습니까>', {

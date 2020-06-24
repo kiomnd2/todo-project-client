@@ -11,6 +11,10 @@ const ListService = class {
 
     deleteList(form) {
         return axios.post('/api/list/delete', form);
+    };
+
+    updateList(form) {
+        return axios.post('api/list/update', form);
     }
 }
 
