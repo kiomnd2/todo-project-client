@@ -1,7 +1,17 @@
 <template>
     <div style="text-align: center;">
         <el-card shadow="true" style="width: 900px;" class="alien_center" v-loading="loading">
-            <el-tag style="text-align: right; display: block;">{{userId}}님이 로그인 하셨습니다</el-tag>
+            <div style="text-align: right; display: block; cursor: pointer;" @click="btnlogout">
+                <el-tooltip class="item" effect="dark" content="로그아웃" placement="top-start">
+                    <i class="el-icon-turn-off"></i>
+                </el-tooltip>
+            </div>
+            <div style="display: block">
+                <el-tag style="text-align: right; display: block;">
+                    {{userId}}님이 로그인 하셨습니다
+                </el-tag>
+            </div>
+            <br/>
             <el-form>
                 <el-row>
                     <el-col :span="22">
@@ -36,8 +46,7 @@
                 </el-table-column>
 
                 <el-table-column align="right">
-                    <template slot-scope="scope">
-                        <el-button v-if="!modeE"
+                    <template slot-scope="scope"><el-button v-if="!modeE"
                                 size="mini"
                                 @click="modeE = true">Edit</el-button>
                         <el-button v-else
@@ -83,6 +92,7 @@ export default {
         }
     },
     methods :{
+
         async regContent() {
             const data = {
                 memberDto: {
@@ -123,8 +133,6 @@ export default {
             }).then(() => {
                 // this.tableData.
                 const item = this.tableData[index];
-                // const item = this.tableData.get(index);
-                // console.log(this.tableData.get(index))
                 this.loading = true;
                 ListService.deleteList(item).then(()=>{
                     this.tableData.splice(index, 1);
@@ -143,10 +151,22 @@ export default {
             }).finally(()=>{
                 this.loading = false;
             })
-        }
+        },
+        btnlogout() {
+            this.$store.commit('setUserState',{
+                userId: undefined,
+                userNm: undefined
+            });
+            this.$router.push("/");
+        },
     },
     async created() {
         this.userId = this.$store.getters.getUser.userId;
+        if(!this.userId) {
+            // 없으면 돌아가야지..
+            this.$router.push("/");
+        }
+
         const list = await ListService.getAllList(this.userId);
         console.log(list.data);
         this.tableData = list.data;
