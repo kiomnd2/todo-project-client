@@ -46,13 +46,7 @@
                 </el-table-column>
 
                 <el-table-column align="right">
-                    <template slot-scope="scope"><el-button v-if="!modeE"
-                                size="mini"
-                                @click="modeE = true">Edit</el-button>
-                        <el-button v-else
-                                   size="mini"
-                                   @click="handleEdit(scope.$index, scope.row)">확인</el-button>
-
+                    <template slot-scope="scope">
                         <el-button
                                 size="mini"
                                 type="danger"
