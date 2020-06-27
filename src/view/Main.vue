@@ -1,31 +1,33 @@
 <template>
     <div style="text-align: center;">
-        <el-card shadow="true" style="width: 900px;" class="alien_center" v-loading="loading">
-            <div style="text-align: right; display: block; cursor: pointer;" @click="btnlogout">
-                <el-tooltip class="item" effect="dark" content="로그아웃" placement="top-start">
-                    <i class="el-icon-turn-off"></i>
-                </el-tooltip>
+        <el-card shadow="true" body-style="overflow:scroll; width: 900px; height: 600px" class="alien_center" v-loading="loading">
+            <div slot="header">
+                <div style="text-align: right; display: block; cursor: pointer;" @click="btnlogout">
+                    <el-tooltip class="item" effect="dark" content="로그아웃" placement="top-start">
+                        <i class="el-icon-turn-off"></i>
+                    </el-tooltip>
+                </div>
+                <div style="display: block">
+                    <el-tag style="text-align: right; display: block;">
+                        {{userId}}님이 로그인 하셨습니다
+                    </el-tag>
+                </div>
+                <br/>
+                <el-form :model="regForm" ref="regForm" :rules="rules">
+                    <el-row>
+                        <el-col :span="22">
+                            <el-form-item prop="contents">
+                                <el-input icon="el-icon-edit" v-model="regForm.contents"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="2">
+                            <el-form-item>
+                                <el-button @click="regContent('regForm')" type="primary" native-type="button">등록</el-button>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </el-form>
             </div>
-            <div style="display: block">
-                <el-tag style="text-align: right; display: block;">
-                    {{userId}}님이 로그인 하셨습니다
-                </el-tag>
-            </div>
-            <br/>
-            <el-form>
-                <el-row>
-                    <el-col :span="22">
-                        <el-form-item>
-                            <el-input icon="el-icon-edit" v-model="contents"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="2">
-                        <el-form-item>
-                            <el-button @click="regContent" type="primary" native-type="button">등록</el-button>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-            </el-form>
             <el-table :data="tableData" :key="tableData.id">
                 <el-table-column
                     label="체크"
@@ -60,6 +62,8 @@
 
 <script>
 import ListService from '../api/list.api'
+import { executeLogout } from '../api/user.api'
+
 export default {
   name: 'Main',
     data() {
@@ -80,32 +84,43 @@ export default {
                 },
 
             ],
+            regForm: {
+                contents: '',
+            },
             search: '',
-            contents: '',
             cntSize: 0,
+            rules: {
+                contents: [
+                    { required: true, message: 'Please input', trigger: 'blur' },
+                ],
+            }
         }
     },
     methods :{
+        regContent(form) {
 
-        async regContent() {
-            const data = {
-                memberDto: {
-                    userId: this.userId,
-                },
-                contents : this.contents,
-                complete: false,
-            };
-            try {
-                this.loading = true;
-               const item = await ListService.RegisterList(data);
-               this.tableData.push(item.data);
-               this.contents= "";
-            } catch (e) {
-                console.log(e);
-                this.$message.error("등록에 실패했습니다.");
-            } finally {
-                this.loading = false;
-            }
+            this.$refs[form].validate((valid)=>{
+                if(valid) {
+                    const data = {
+                        memberDto: {
+                            userId: this.userId,
+                        },
+                        contents: this.regForm.contents,
+                        complete: false,
+                    };
+
+                    this.loading = true;
+                    ListService.RegisterList(data).then((item) => {
+                        this.tableData.push(item.data);
+                        this.regForm.contents = "";
+                    }).catch(() => {
+                        this.$message.error("등록에 실패했습니다.");
+                    }).finally(() => {
+                        this.loading = false;
+                    });
+                }
+            });
+
 
 
         },
@@ -146,11 +161,13 @@ export default {
                 this.loading = false;
             })
         },
-        btnlogout() {
+        async btnlogout() {
             this.$store.commit('setUserState',{
                 userId: undefined,
                 userNm: undefined
             });
+            await executeLogout();
+
             this.$router.push("/");
         },
     },

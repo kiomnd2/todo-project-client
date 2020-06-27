@@ -145,6 +145,7 @@ export default {
       },
     };
   },
+  name: 'Join',
   methods: {
     btn_submit(form) {
       this.$refs[form].validate((valid) => {

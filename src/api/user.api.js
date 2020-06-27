@@ -8,8 +8,12 @@ const executeLogin = (form) => {
   return axios.post('/api/user/login', form);
 };
 
+const executeLogout = (form) => {
+  return axios.post('/api/logout');
+}
+
 const executeRegister = (form) => {
   return axios.post('/api/user/register', form);
 };
 
-export { executeLogin, executeRegister };
+export { executeLogin, executeRegister,executeLogout };
